@@ -2,14 +2,15 @@ package ticseinfo3.samiri.ebankbackend.services;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticseinfo3.samiri.ebankbackend.dto.CustomerDTO;
 import ticseinfo3.samiri.ebankbackend.entities.*;
 import ticseinfo3.samiri.ebankbackend.enums.OperationType;
 import ticseinfo3.samiri.ebankbackend.exeptions.BankAccountNotFondException;
 import ticseinfo3.samiri.ebankbackend.exeptions.BanlnceNotSufacientException;
 import ticseinfo3.samiri.ebankbackend.exeptions.CustomerNotFundException;
+import ticseinfo3.samiri.ebankbackend.mappers.BankAccountMapperImpl;
 import ticseinfo3.samiri.ebankbackend.repositoies.AccountOperationRepository;
 import ticseinfo3.samiri.ebankbackend.repositoies.BankAccountRepository;
 import ticseinfo3.samiri.ebankbackend.repositoies.CustomerRepository;
@@ -17,6 +18,7 @@ import ticseinfo3.samiri.ebankbackend.repositoies.CustomerRepository;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -27,28 +29,55 @@ public class BankAccountServiceImpl implements BankAccountService{
     private CustomerRepository customerRepo;
     private BankAccountRepository bankAccountRepo ;
     private AccountOperationRepository accountOperationRepo ;
+    private BankAccountMapperImpl dtoMapper;
 
 
 
-
+    // Customer Section
     @Override
-    public Customer addCustomer(Customer customer) {
-        log.info("Adding new customer : {}",customer);
+    public CustomerDTO addCustomer(CustomerDTO customerDTO) {
+        log.info("Adding new customer : {}");
+        Customer customer = dtoMapper.fromCustomerDtoToCustomer(customerDTO);
         Customer addedCustomer = customerRepo.save(customer);
-        return addedCustomer;
+        return dtoMapper.fromCustomerToCustomerDTO(addedCustomer);
     }
 
     @Override
-    public Customer getCustomer(Long id) throws CustomerNotFundException {
-        Customer getcustomer = customerRepo.findById(id).orElse(null);
-        if (getcustomer==null)
-            throw new CustomerNotFundException("Customer not fund");
-        return getcustomer;
+    public List<CustomerDTO> getAllCustomers() {
+        List<Customer> customers = customerRepo.findAll();
+        List<CustomerDTO> customerDTOS =  customers.stream()
+                .map(cust->dtoMapper.fromCustomerToCustomerDTO(cust)).collect(Collectors.toList());
+        return customerDTOS;
     }
+
+    @Override
+    public CustomerDTO getCustomer(Long id) throws CustomerNotFundException {
+        Customer customer = customerRepo.findById(id)
+                .orElseThrow(()->new CustomerNotFundException("customer not fond"));
+
+        return dtoMapper.fromCustomerToCustomerDTO(customer);
+    }
+
+    @Override
+    public  CustomerDTO updaCustomer(CustomerDTO customerDTO){
+        log.info("Update the Customer " +customerDTO.getName() );
+        Customer customer = dtoMapper.fromCustomerDtoToCustomer(customerDTO);
+        Customer addedCustomer = customerRepo.save(customer);
+        return dtoMapper.fromCustomerToCustomerDTO(addedCustomer);
+    }
+
+    @Override
+    public void deletCustomer(long id) {
+        customerRepo.deleteById(id);
+    }
+
+
+
 
     @Override
     public CurrentAccount addCurrentBankAccount(double initialBalence, double overDraft, Long customerId) throws CustomerNotFundException {
-        Customer customer = getCustomer(customerId);
+        CustomerDTO customerDTO = getCustomer(customerId);
+        Customer customer = dtoMapper.fromCustomerDtoToCustomer(customerDTO);
         if(customer ==null)
             throw new CustomerNotFundException("Customer not found");
         CurrentAccount currentAccount = new CurrentAccount();
@@ -63,7 +92,8 @@ public class BankAccountServiceImpl implements BankAccountService{
 
     @Override
     public SavingAccount addSavingBankAccount(double initialBalence, double intrestRate, Long customerId) throws CustomerNotFundException {
-        Customer customer = getCustomer(customerId);
+        CustomerDTO customerDTO = getCustomer(customerId);
+        Customer customer = dtoMapper.fromCustomerDtoToCustomer(customerDTO);
         if (customer== null)
             throw new CustomerNotFundException("custumor not found");
         SavingAccount savingAccount = new SavingAccount();
@@ -76,25 +106,17 @@ public class BankAccountServiceImpl implements BankAccountService{
         return bankAccountRepo.save(savingAccount);
     }
 
-
-
-
-
-
-
     @Override
     public BankAccount addBankAccount(BankAccount bankAccount, Long customerId) {
         return null;
     }
 
-    @Override
-    public List<Customer> getAllCustomers() {
-        return null;
-    }
+
 
     @Override
     public List<BankAccount> getAllBankAccounts() {
-        return null;
+
+        return bankAccountRepo.findAll();
     }
 
     @Override
