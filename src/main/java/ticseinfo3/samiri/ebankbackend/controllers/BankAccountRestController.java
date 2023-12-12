@@ -3,10 +3,9 @@ package ticseinfo3.samiri.ebankbackend.controllers;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ticseinfo3.samiri.ebankbackend.dto.AccountHistoryDTO;
-import ticseinfo3.samiri.ebankbackend.dto.AccountOperationDTO;
-import ticseinfo3.samiri.ebankbackend.dto.BankAccountDTO;
+import ticseinfo3.samiri.ebankbackend.dto.*;
 import ticseinfo3.samiri.ebankbackend.exeptions.BankAccountNotFondException;
+import ticseinfo3.samiri.ebankbackend.exeptions.CustomerNotFundException;
 import ticseinfo3.samiri.ebankbackend.services.BankAccountService;
 
 import java.security.PrivateKey;
@@ -20,29 +19,33 @@ public class BankAccountRestController {
 
     private BankAccountService bankAccountService;
 
+    @PostMapping("/create/current/{initialBalance}/{overDraft}/{customerId}")
+    public CurrentBankAccountDTO addCurrentBankAccount(@PathVariable double initialBalance,
+                                                       @PathVariable double overDraft,
+                                                       @PathVariable Long customerId) throws CustomerNotFundException {
+        return bankAccountService.addCurrentBankAccount(initialBalance,overDraft,customerId);
+    }
 
+    @PostMapping("/create/saving/{initialBalance}/{intrestRate}/{customerId}")
+    public SavingBankAccountDTO addSavingBankAccount(@PathVariable double initialBalance,
+                                                     @PathVariable double intrestRate,
+                                                     @PathVariable Long customerId) throws CustomerNotFundException {
+        return bankAccountService.addSavingBankAccount(initialBalance,intrestRate,customerId);
+    }
 
+    @DeleteMapping("/delete/{accountId}")
+    public String deleteBankAccount(@PathVariable String accountId) throws BankAccountNotFondException {
+        return bankAccountService.deleteBankAccount(accountId);
+    }
     @GetMapping("/{accountId}")
     public BankAccountDTO getBankAccount(@PathVariable String accountId) throws BankAccountNotFondException {
         return bankAccountService.getBankAccount(accountId);
     }
 
+    // get all bank accounts
     @GetMapping("/Liste")
     public List<BankAccountDTO> getBankAccounts(){
-
         return bankAccountService.getAllBankAccounts();
-    }
-
-    @GetMapping("/operations/{accountId}")
-    public List<AccountOperationDTO> accountHistory(@PathVariable String accountId){
-      return bankAccountService.accountHistory(accountId);
-    }
-
-    @GetMapping("/accountHistory/{accountId}")
-    public AccountHistoryDTO getAccountHistory(@PathVariable String accountId,
-                                               @RequestParam(name = "page" ,defaultValue = "0") int page,
-                                               @RequestParam(name = "size" ,defaultValue = "5") int size) throws BankAccountNotFondException {
-        return bankAccountService.getAccountHistory(accountId,page,size);
     }
 
 }
