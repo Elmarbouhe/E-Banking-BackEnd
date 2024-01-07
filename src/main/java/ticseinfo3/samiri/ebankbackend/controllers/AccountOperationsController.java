@@ -3,9 +3,7 @@ package ticseinfo3.samiri.ebankbackend.controllers;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ticseinfo3.samiri.ebankbackend.dto.AccountHistoryDTO;
-import ticseinfo3.samiri.ebankbackend.dto.AccountOperationDTO;
-import ticseinfo3.samiri.ebankbackend.dto.BankAccountDTO;
+import ticseinfo3.samiri.ebankbackend.dto.*;
 import ticseinfo3.samiri.ebankbackend.exeptions.BankAccountNotFondException;
 import ticseinfo3.samiri.ebankbackend.exeptions.BanlnceNotSufacientException;
 import ticseinfo3.samiri.ebankbackend.services.AccountOperationsService;
@@ -17,33 +15,28 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 @RequestMapping("/operations")
+@CrossOrigin("*")
 public class AccountOperationsController {
 
     private AccountOperationsService accountOperationsService;
 
-    @PostMapping("/debit/{accountId}/{amount}/{description}")
-    public void debit(@PathVariable String accountId,
-                      @PathVariable double amount,
-                      @PathVariable String description) throws BankAccountNotFondException, BanlnceNotSufacientException{
-
-        accountOperationsService.debit(accountId,amount,description);
+    @PostMapping("/debit")
+    public DebitDTO debit(@RequestBody DebitDTO debit) throws BankAccountNotFondException, BanlnceNotSufacientException{
+        accountOperationsService.debit(debit.getAccountId(),debit.getAmount(),debit.getDescription());
+        return debit ;
     }
 
-    @PostMapping("/credit/{accountId}/{amount}/{description}")
-    public void credit(@PathVariable String accountId,
-                       @PathVariable double amount,
-                       @PathVariable String description) throws BankAccountNotFondException{
-
-        accountOperationsService.credit(accountId,amount,description);
+    @PostMapping("/credit")
+    public CreditDTO credit(@RequestBody CreditDTO credit) throws BankAccountNotFondException, BanlnceNotSufacientException{
+        accountOperationsService.credit(credit.getAccountId(),credit.getAmount(),credit.getDescription());
+        return credit ;
     }
 
-    @PostMapping("/transfer/{fromAccountId}/{toAccountId}/{amount}")
-    public void transfer(@PathVariable String fromAccountId,
-                         @PathVariable String toAccountId,
-                         @PathVariable double amount) throws BankAccountNotFondException, BanlnceNotSufacientException{
-
-        accountOperationsService.transfer(fromAccountId,toAccountId,amount);
+    @PostMapping("/transfer")
+    public void debit(@RequestParam TransferRequestDTO transfer) throws BankAccountNotFondException, BanlnceNotSufacientException{
+        accountOperationsService.transfer(transfer.getAccountSource(),transfer.getAccountDestination(),transfer.getAmount());   ;
     }
+
 
 
     @GetMapping("/operations/{accountId}")

@@ -8,7 +8,7 @@ import ticseinfo3.samiri.ebankbackend.exeptions.CustomerNotFundException;
 import ticseinfo3.samiri.ebankbackend.services.CustomerService;
 
 import java.util.List;
-
+@CrossOrigin("*")
 @RestController
 @AllArgsConstructor
 @Slf4j
@@ -27,12 +27,20 @@ public class CustomerRestController {
         return customerService.getCustomer(id);
     }
 
-    @GetMapping("/getAll")
+    @GetMapping("/list")
     public List<CustomerDTO> getAllCustomers(){
         return customerService.getAllCustomers();
     }
 
+    @GetMapping("/searchByName")
+    public List<CustomerDTO> searchCustomersByName(@RequestParam(name = "name") String name){
+        return customerService.searchCustomersByName(name);
+    }
 
+    @GetMapping("/searchByEmail")
+    public List<CustomerDTO> searchCustomersByEmail(@RequestParam(name = "email") String email){
+        return customerService.searchCustomersByEmail(email);
+    }
 
     @PutMapping("/update/{customerId}")
     public CustomerDTO updateCustomer(@PathVariable long customerId, @RequestBody CustomerDTO customerDTO){
@@ -41,9 +49,8 @@ public class CustomerRestController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteCustomer(@PathVariable long id){
+    public void deleteCustomer(@PathVariable long id){
         customerService.deletCustomer(id);
-        return "Customer is deleted";
     }
 
 }

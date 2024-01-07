@@ -58,4 +58,19 @@ public class CustomerServiceImpl implements CustomerService {
                 .map(cust->dtoMapper.fromCustomerToCustomerDTO(cust)).collect(Collectors.toList());
         return customerDTOS;
     }
+
+    @Override
+    public List<CustomerDTO> searchCustomersByName(String key) {
+        List<Customer> customers = customerRepo.findByNameContains(key);
+        List<CustomerDTO> customerDTOS = customers.stream().map(cus-> dtoMapper.fromCustomerToCustomerDTO(cus)).collect(Collectors.toList());
+        return customerDTOS ;
+    }
+
+    @Override
+    public List<CustomerDTO> searchCustomersByEmail(String email) {
+        List<Customer> customers = customerRepo.findByEmailContains(email);
+        List<CustomerDTO> customerDTOS = customers.stream()
+                .map(customer -> dtoMapper.fromCustomerToCustomerDTO(customer)).collect(Collectors.toList());
+        return customerDTOS;
+    }
 }

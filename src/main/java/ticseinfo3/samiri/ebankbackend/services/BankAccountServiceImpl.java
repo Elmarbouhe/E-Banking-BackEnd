@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import ticseinfo3.samiri.ebankbackend.dto.*;
 import ticseinfo3.samiri.ebankbackend.entities.*;
 import ticseinfo3.samiri.ebankbackend.enums.OperationType;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 @Slf4j
+
 public class BankAccountServiceImpl implements BankAccountService {
 
     private CustomerRepository customerRepo;
