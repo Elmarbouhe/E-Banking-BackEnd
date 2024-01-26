@@ -1,9 +1,9 @@
 package ticseinfo3.samiri.ebankbackend.security;
 
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
@@ -27,7 +27,7 @@ public class SecurityController {
     private JwtEncoder jwtEncoder;
 
     @GetMapping("/profile")
-    public Authentication authentication(Authentication authentication){
+    public org.springframework.security.core.Authentication authentication(Authentication authentication){
         return authentication;
     }
 
