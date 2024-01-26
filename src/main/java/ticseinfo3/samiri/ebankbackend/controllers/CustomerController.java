@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 @RequestMapping("/customers")
-public class CustomerRestController {
+public class CustomerController {
 
     private CustomerService customerService;
 

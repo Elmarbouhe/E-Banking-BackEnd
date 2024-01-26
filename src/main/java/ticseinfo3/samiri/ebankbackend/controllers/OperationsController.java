@@ -7,7 +7,7 @@ import ticseinfo3.samiri.ebankbackend.dto.*;
 import ticseinfo3.samiri.ebankbackend.exeptions.BankAccountNotFondException;
 import ticseinfo3.samiri.ebankbackend.exeptions.BanlnceNotSufacientException;
 import ticseinfo3.samiri.ebankbackend.services.AccountOperationsService;
-import ticseinfo3.samiri.ebankbackend.services.BankAccountService;
+
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/operations")
 @CrossOrigin("*")
-public class AccountOperationsController {
+public class OperationsController {
 
     private AccountOperationsService accountOperationsService;
 
@@ -27,14 +27,14 @@ public class AccountOperationsController {
     }
 
     @PostMapping("/credit")
-    public CreditDTO credit(@RequestBody CreditDTO credit) throws BankAccountNotFondException, BanlnceNotSufacientException{
+    public CreditDTO credit(@RequestBody CreditDTO credit) throws BankAccountNotFondException,   BanlnceNotSufacientException{
         accountOperationsService.credit(credit.getAccountId(),credit.getAmount(),credit.getDescription());
         return credit ;
     }
 
     @PostMapping("/transfer")
-    public void debit(@RequestParam TransferRequestDTO transfer) throws BankAccountNotFondException, BanlnceNotSufacientException{
-        accountOperationsService.transfer(transfer.getAccountSource(),transfer.getAccountDestination(),transfer.getAmount());   ;
+    public void transfer(@RequestBody TransferRequestDTO transfer) throws BankAccountNotFondException, BanlnceNotSufacientException{
+        accountOperationsService.transfer(transfer.getAccountSource(),transfer.getAccountDestination(),transfer.getAmount(),transfer.getDescription());   ;
     }
 
 

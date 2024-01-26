@@ -8,7 +8,6 @@ import ticseinfo3.samiri.ebankbackend.exeptions.BankAccountNotFondException;
 import ticseinfo3.samiri.ebankbackend.exeptions.CustomerNotFundException;
 import ticseinfo3.samiri.ebankbackend.services.BankAccountService;
 
-import java.security.PrivateKey;
 import java.util.List;
 
 @RestController
@@ -16,7 +15,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/accounts")
 @CrossOrigin("*")
-public class BankAccountRestController {
+public class BankAccountController {
 
     private BankAccountService bankAccountService;
 

@@ -35,7 +35,7 @@ public class AccountOperationsServiceImpl implements AccountOperationsService{
     public void debit(String accountId, double amount, String description) throws BankAccountNotFondException, BanlnceNotSufacientException {
         BankAccount bankAccount = bankAccountServiceImpl.findBankAccount(accountId);
         if (bankAccount.getBalance()<amount)
-            throw new BanlnceNotSufacientException("this account is not Exist");
+            throw new BanlnceNotSufacientException("the balance is not suficient");
         else if (bankAccount.getBalance() >= amount) {
             AccountOperation accountOperation = new AccountOperation();
             accountOperation.setType(OperationType.DEBIT);
@@ -58,15 +58,16 @@ public class AccountOperationsServiceImpl implements AccountOperationsService{
         accountOperation.setDescription(description);
         accountOperation.setOperationDate(new Date());
         accountOperation.setBankAccount(bankAccount);
+        accountOperationRepo.save(accountOperation);
         bankAccount.setBalance(bankAccount.getBalance()+amount);
         bankAccountRepo.save(bankAccount);
     }
 
 
     @Override
-    public void transfer(String fromAccountId, String toAccountId, double amount) throws BankAccountNotFondException, BanlnceNotSufacientException {
-        debit(fromAccountId,amount,"Transfer to"+toAccountId);
-        credit(fromAccountId,amount,"transfer from"+fromAccountId);
+    public void transfer(String fromAccountId, String toAccountId, double amount,String description) throws BankAccountNotFondException, BanlnceNotSufacientException {
+        debit(fromAccountId,amount,"transfer to "+toAccountId+" "+description);
+        credit(toAccountId,amount,"transfer from "+fromAccountId+" "+description);
     }
 
     @Override
