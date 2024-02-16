@@ -63,7 +63,7 @@ public class CustomerController {
 
     @GetMapping("/test")
     public String test(){
-        return "WA B9A 7ADINI SHUF CHWIA LDIK JIH";
+        return "WA B9A 7ADINI SHUF CHWIA LDIK00 JIH";
     }
 
 }
